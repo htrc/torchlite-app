@@ -1,0 +1,38 @@
+.container {
+    background: #F5FFFA;
+}
+.dashboard {
+    border: 1px solid black;
+    background: #F5FFFA;
+    font-family: "Roboto-Regular", "Roboto", sans-serif;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+}
+
+.controlPane{
+    display: grid;
+    background: #F5FFFA;
+    grid-column: 1 / 1;
+    grid-template-rows: auto;
+}
+
+.widgetPane {
+    background: #F5FFFA;
+    grid-column-start: 2;
+    grid-column-end: 4;
+
+}
+
+.widget {
+    width: 472px;
+    height: 327px;
+    padding: 2px 2px 2px 2px;
+    border: 1px solid gainsboro;
+    background-color: #F5FFFA;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+h1.widgetTitle { font-size: small; }

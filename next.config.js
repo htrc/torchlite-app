@@ -1,18 +1,14 @@
-//js
-module.exports = () => {
-    const rewrites = () => {
-        return [
-            {
-                source: "/cats",
-                destination: "https://meowfacts.herokuapp.com",
-            },
-            {
-                source: "/time",
-                destination: "http://127.0.0.1:5000/time",
-            },
-        ];
-    };
-    return {
-        rewrites,
-    };
-};
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    reactStrictMode: true,
+    swcMinify: true,
+    experimental: {
+        fontLoaders: [
+            { loader: '@next/font/google', options: { subsets:
+                                                      ['latin']}},
+        ],
+        appDir: true,
+    },
+}
+
+module.exports = nextConfig
