@@ -6,7 +6,7 @@ export default function RootLayout({
   return (
     <html>
       <head />
-      <body>
+      <body id="root">
         <header>Torchlite</header>
         {children}
       </body>
