@@ -5,7 +5,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode,
 }) {
-    return <main className={styles.container}>
+    return <main className="dashboard">
              <header>Dashboard</header>
              {children}
            </main>

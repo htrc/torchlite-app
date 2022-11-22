@@ -1,3 +1,6 @@
+import Head from 'next/head';
+import styles from './styles.module.scss';
+
 export default function RootLayout({
   children,
 }: {
@@ -5,10 +8,13 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <head />
+      <Head>
+        <title>Torchlite</title>
+      </Head>
       <body id="root">
-        <header>Torchlite</header>
+        <header className={styles.header}>Torchlite</header>
         {children}
+        <footer className={styles.footer}>HathiTrust Research Center</footer>
       </body>
     </html>
   )

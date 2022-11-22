@@ -1,9 +1,11 @@
+import Head from 'next/head';
+import Link from 'next/link';
 import styles from './styles.module.scss';
-import { Oxygen } from '@next/font/google';
+
 
 function WorkSetPane() {
     return (
-        <section className={styles.control}>
+        <section className={styles.workset_pane}>
           <header>
           <h2>Worksets</h2>
           </header>
@@ -14,7 +16,7 @@ function WorkSetPane() {
 
 function WidgetSelectorPane() {
     return (
-        <section className={styles.control}>
+        <section className={styles.selector_pane}>
             <header>
                 <h2>Widgets</h2>
             </header>
@@ -25,7 +27,7 @@ function WidgetSelectorPane() {
 
 function DataFilterPane(){
     return (
-        <section className={styles.control}>
+        <section className={styles.data_filter_pane}>
             <header>
                 <h2>Data Filters</h2>
             </header>
@@ -36,18 +38,18 @@ function DataFilterPane(){
 
 function DataCleanPane(){
     return (
-        <section className={styles.control}>
+        <section className={styles.data_clean_pane}>
             <header>
-                <h2>Data Filters</h2>
+                <h2>Data Cleaners</h2>
             </header>
-            <p className="slug">The data filter pane</p>
+            <p className="slug">The data cleaners pane</p>
         </section>
     );
 };
 
 function ControlPane() {
     return (
-        <section className={styles.controlPane}>
+        <section className={styles.control_pane}>
           <WorkSetPane />
           <WidgetSelectorPane />
           <DataFilterPane />
@@ -60,39 +62,25 @@ function ControlPane() {
 function Widget(props){
   return(
       <div className={styles.widget}>
-      <div className="widget__body">
-        <img src={props.img} className="widget__image"/>
-        <h2 className="widget__title">{props.title}</h2>
-        <p className="widget__description">{props.desc}</p>
+        <div className= {styles.widget__body}>
+          <img src={props.img} className={styles.widget__image}/>
+          <h2 className={styles.widget__title}>{props.title}</h2>
+          <p className={styles.widget__description}>{props.desc}</p>
       </div>
-      <button className="widget__btn">Inspect</button>
+        <button className={styles.widget__btn}>Inspect</button>
     </div>
   )
 }
 
-
-function Widgetold() {
-    return (
-        <div className={styles.widget}>
-          <header>
-            <h1 className={styles.widgetTitle}>a widget</h1>
-            <p className={styles.slug}>contents of the widget should be graphic</p>
-          </header>
-        </div>
-    );
-};
-
 function WidgetPane() {
     return (
-        <section className={styles.widgetPane} id="widgetPane">
-          <header>
-            <h2>Widget Pane</h2>
-          </header>
-          <p className={styles.slug}>The data widget pane</p>
+        <section className={styles.widget_pane} id="widgetPane">
           <Widget img="https://picsum.photos/300/200"
-                  title="one widget"
+                  title="widget one"
           desc="A widget that displays some data about a workset."/>
-          <Widget />
+          <Widget img="https://picsum.photos/300/200"
+                  title="widget two"
+          desc="A widget that displays some data about a workset."/>
         </section>
     );
 };
