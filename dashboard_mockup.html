@@ -16,49 +16,49 @@
                     "control2 widget widget widget"
                     "control3 widget widget widget"
                     "control4 widget widget widget"
-                    "footer footer footer footer";            
+                    "footer footer footer footer";
             }
-            
-            h1, h2, h3, h4, h5, h6 { 
+
+            h1, h2, h3, h4, h5, h6 {
                 font-family: "Roboto-Regular", "Roboto", sans-serif;
                 font-size: medium;
                 color: #2F4F4F;
                 padding: 0;
                 }
-                
+
             p { font-family: "ArialMT", "Arial", sans-serif;
                 font-size: small;
             }
-            
+
             .slug { font-style: italic; }
-            
-            #pageHeader { 
+
+            #pageHeader {
                 grid-area: header;
                 background: #F5F5F5;
                 border: 1px solid gainsboro;
                 text-align: center;
                 }
-            #workSetPane { grid-area: control1; 
+            #workSetPane { grid-area: control1;
                             border: 1px solid gainsboro;
                             }
-            #widgetSelectorPane { grid-area: control2; 
-                            border: 1px solid gainsboro;
-                            }                            
-            #dataFilterPane { grid-area: control3; 
+            #widgetSelectorPane { grid-area: control2;
                             border: 1px solid gainsboro;
                             }
-            #dataCleanPane { grid-area: control4; 
+            #dataFilterPane { grid-area: control3;
                             border: 1px solid gainsboro;
                             }
-            #widgetPane { grid-area: widget; 
+            #dataCleanPane { grid-area: control4;
                             border: 1px solid gainsboro;
                             }
-            #pageFooter { grid-area: footer; 
+            #widgetPane { grid-area: widget;
+                            border: 1px solid gainsboro;
+                            }
+            #pageFooter { grid-area: footer;
                             background: #F5F5F5;
                             border: 1px solid gainsboro;
-                            text-align: center; 
+                            text-align: center;
                             }
-                            
+
             .widget {
                     width: 472px;
                     height: 327px;
@@ -68,7 +68,7 @@
                     box-sizing: border-box;
                     display: inline-block;
                     }
-                    
+
             h1.widgetTitle { font-size: small; }
         </style>
     </head>
@@ -80,27 +80,27 @@
             <header>
                 <h2>Worksets</h2>
             </header>
-            <p class="slug">The workset pane</p>            
+            <p class="slug">The workset pane</p>
         </section>
         <section id="widgetSelectorPane">
             <header>
                 <h2>Widgets</h2>
             </header>
-            <p class="slug">The widget selector pane</p>            
+            <p class="slug">The widget selector pane</p>
         </section>
         <section id="dataFilterPane">
             <header>
                 <h2>Data Filters</h2>
             </header>
-            <p class="slug">The data filter pane</p>            
+            <p class="slug">The data filter pane</p>
         </section>
         <section id="dataCleanPane">
             <header>
                 <h2>Data Cleaners</h2>
             </header>
-            <p class="slug">The data clean pane</p>            
+            <p class="slug">The data clean pane</p>
         </section>
-        
+
         <section id="widgetPane">
             <header>
                 <h2>Widget Pane</h2>
@@ -109,24 +109,24 @@
             <div class="widget">
                <header>
                    <h1 class="widgetTitle">a widget</h1>
-                   
+
                </header>
             </div>
-            
+
             <div class="widget">
                 <header>
                     <h1 class="widgetTitle">a widget</h1>
-                    
+
                 </header>
-            </div>            
+            </div>
             <div class="widget">
                 <header>
                     <h1 class="widgetTitle">a widget</h1>
-                    
+
                 </header>
             </div>
         </section>
-        
+
         <footer id="pageFooter">
             <span>copyright and other information</span>
         </footer>
