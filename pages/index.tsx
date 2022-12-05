@@ -13,7 +13,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to Torchlite
+          Hello Torchlite
         </h1>
 
         <div className={styles.grid}>
