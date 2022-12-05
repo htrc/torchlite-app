@@ -12,13 +12,11 @@ $clr-gray700: #161d34;
 /* border radius */
 $radius: 0.2rem;
 
-.navbar {
-    background: $clr-gray300;
-    color: $clr-primary;
-}
-
-.navbar ul {
+.pane {
+    background: $clr-gray100;
     display: flex;
-    gap: 25px;
-    list-style: none;
+    justify-content:center;
+    font-family: "Roboto-Regular", "Roboto", sans-serif;
+    grid-gap: 10px;
+
 }
