@@ -1,5 +1,5 @@
 'use client';
-
+import Image from 'next/image'
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from './widget.module.scss';
@@ -15,7 +15,7 @@ export default function Widget(props: WidgetProps){
   return(
       <div className={styles.widget}>
         <div className= {styles.widget__body}>
-          <img src={props.img} className={styles.widget__image}/>
+          <img src={props.img} alt="dummy image" className={styles.widget__image}/>
           <h2 className={styles.widget__title}>{props.title}</h2>
           <p className={styles.widget__description}>{props.desc}</p>
       </div>

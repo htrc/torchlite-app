@@ -10,9 +10,10 @@ export default function Navbar() {
     return <nav className={styles.navbar}>
              <ul>
                <li><Link href="/">Home</Link></li>
+               <li><Link href="/worksets">Work Sets</Link></li>
+               <li><Link href="/widgets">Widgets</Link></li>
                <li><Link href="dashboard">Dashboard</Link></li>
-               <li><Link href="/">Work Sets</Link></li>
-               <li><Link href="/">Widgets</Link></li>
+               <li><Link href="notebooks">Notebooks</Link></li>
              </ul>
            </nav>
 }
