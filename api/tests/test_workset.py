@@ -1,6 +1,5 @@
 import pytest
-from extracted_features.workset import WorkSet
-from extracted_features.page import Page
+from api.extracted_features import WorkSet, Page
 
 
 @pytest.fixture
