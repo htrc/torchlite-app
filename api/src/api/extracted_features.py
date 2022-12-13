@@ -1,4 +1,5 @@
 from collections import Counter
+from urllib.parse import urlparse
 import requests
 import logging
 
@@ -56,9 +57,28 @@ class Volume:
 
 
 class WorkSet:
-    def __init__(self, volume_list):
+    def __init__(self, volume_list=[]):
         self.volumes = [Volume(htid) for htid in volume_list]
         self._tokens = {}
+        self._description = ""
+
+    def import_ws(self, ws_id):
+        base_url = 'https://worksets.htrc.illinois.edu/api/worksets'
+        url = '/'.join((base_url, ws_id))
+        r = requests.get(url)
+        json = r.json()
+        self._description = json['description']
+        for gathered in json['gathers']:
+            v_id = urlparse(gathered['id']).path.split('/')[-1]
+            self.volumes.append(Volume(v_id))
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, v):
+        self._description = v
 
     @property
     def tokens(self):

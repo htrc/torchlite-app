@@ -1,5 +1,8 @@
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+addopts = [
+    "--import-mode=importlib",
+]
 
 [tool.poetry]
 name = "api"
@@ -7,7 +10,7 @@ version = "0.1.0"
 description = ""
 authors = ["cwulfman <cwulfman@princeton.edu>"]
 readme = "README.md"
-packages = [{include = "ef", from = "src"}]
+packages = [{include = "api", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
