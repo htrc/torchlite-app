@@ -17,4 +17,4 @@ def test_widget(workset):
 
 def test_metadata_widget(workset):
     w = MetadataWidget(workset)
-    assert w.data == ["foo"]
+    assert len(w.data) == 3

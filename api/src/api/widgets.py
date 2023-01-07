@@ -22,5 +22,5 @@ class MetadataWidget(Widget):
     @property
     def data(self):
         if self._data is None:
-            self._data = self._workset.volumes
+            self._data = self._workset.metadata
         return self._data
