@@ -13,3 +13,9 @@ def test_volumes(workset):
 
 def test_tokens(workset):
     assert len(workset.tokens) == 47892
+
+def test_import():
+    ws_id = 'https://worksets.htrc.illinois.edu/wsid/771d1500-7ac6-11eb-8593-e5f5ab8b1c01'
+    workset = WorkSet()
+    workset.import_ws(ws_id)
+    assert len(workset.volumes) == 16

@@ -1,4 +1,4 @@
-[tool.pytest.ini_options]
+                [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = [
     "--import-mode=importlib",
@@ -26,5 +26,5 @@ black = "^22.12.0"
 flake8 = "^6.0.0"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.8"]
 build-backend = "poetry.core.masonry.api"

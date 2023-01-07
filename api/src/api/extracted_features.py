@@ -33,6 +33,10 @@ class Volume:
         return self.data["features"]
 
     @property
+    def metadata(self):
+        return self.data["metadata"]
+
+    @property
     def pageCount(self):
         return self.features["pageCount"]
 
@@ -63,9 +67,12 @@ class WorkSet:
         self._description = ""
 
     def import_ws(self, ws_id):
-        base_url = 'https://worksets.htrc.illinois.edu/api/worksets'
-        url = '/'.join((base_url, ws_id))
-        r = requests.get(url)
+        try:
+            r = requests.get(ws_id)
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            raise SystemExit(err)
+
         json = r.json()
         self._description = json['description']
         for gathered in json['gathers']:
@@ -79,6 +86,10 @@ class WorkSet:
     @description.setter
     def description(self, v):
         self._description = v
+
+    @property
+    def metadata(self):
+        return [v.metadata for v in self.volumes]
 
     @property
     def tokens(self):
