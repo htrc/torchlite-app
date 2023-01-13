@@ -24,3 +24,17 @@ class MetadataWidget(Widget):
         if self._data is None:
             self._data = self._workset.metadata
         return self._data
+
+
+class WidgetFactory:
+    def __init__(self):
+        self._widget_classes = {}
+
+    def make_widget(widget_class, workset):
+        try:
+            klass = globals()[widget_class]
+            widget = klass(workset)
+            return widget
+        except KeyError:
+            print(f"Widget class {widget_class} not defined")
+            raise KeyError()

@@ -61,31 +61,49 @@ class Volume:
 
 
 class WorkSet:
-    def __init__(self, volume_list=[]):
-        self.volumes = [Volume(htid) for htid in volume_list]
+    def __init__(self, workset_id=''):
+        self.workset_url = workset_id
+        self._id = workset_id
+        self._json = {}
+        self._volumes = []
         self._tokens = {}
-        self._description = ""
+        self._description = None
 
-    def import_ws(self, ws_id):
-        try:
-            r = requests.get(ws_id)
-            r.raise_for_status()
-        except requests.exceptions.HTTPError as err:
-            raise SystemExit(err)
+    @property
+    def json(self):
+        if not self._json:
+            try:
+                r = requests.get(self.workset_url)
+                r.raise_for_status()
 
-        json = r.json()
-        self._description = json['description']
-        for gathered in json['gathers']:
-            v_id = urlparse(gathered['id']).path.split('/')[-1]
-            self.volumes.append(Volume(v_id))
+            except requests.exceptions.HTTPError as err:
+                raise SystemExit(err)
+
+            self._json = r.json()
+        return self._json
 
     @property
     def description(self):
+        if not self._description:
+            self._description = self.json['description']
         return self._description
 
     @description.setter
     def description(self, v):
         self._description = v
+
+    @property
+    def volumes(self):
+        if not self._volumes:
+            self._volumes = []
+            for gathered in self.json['gathers']:
+                v_id = urlparse(gathered['id']).path.split('/')[-1]
+                self._volumes.append(Volume(v_id))
+        return self._volumes
+
+    @volumes.setter
+    def volumes(self, volume_id):
+        self._volumes.append(Volume(volume_id))
 
     @property
     def metadata(self):

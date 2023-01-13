@@ -6,7 +6,13 @@ import json
 
 @pytest.fixture
 def workset():
-    return WorkSet(["uc1.32106011187561", "mdp.35112103187797", "uc1.$b684263"])
+    mini_workset = WorkSet()
+
+    mini_workset.volumes = "uc1.32106011187561"
+    mini_workset.volumes = "mdp.35112103187797"
+    mini_workset.volumes = "uc1.$b684263"
+    mini_workset.description = "minimal workset"
+    return mini_workset
 
 
 def test_widget(workset):
