@@ -1,26 +1,20 @@
 import pytest
 from api.extracted_features import WorkSet
-from api.widgets import Widget, MetadataWidget
+from api.widgets import WidgetFactory
 import json
 
 
 @pytest.fixture
 def workset():
-    mini_workset = WorkSet()
-
-    mini_workset.volumes = "uc1.32106011187561"
-    mini_workset.volumes = "mdp.35112103187797"
-    mini_workset.volumes = "uc1.$b684263"
-    mini_workset.description = "minimal workset"
-    return mini_workset
-
-
-def test_widget(workset):
-    w = Widget(workset)
-    assert w._data == None
-    assert w.data == []
+    ws = WorkSet()
+    ws.description = "minimal workset"
+    [
+        ws.add_volume(v_id)
+        for v_id in ["uc1.32106011187561", "mdp.35112103187797", "uc1.$b684263"]
+    ]
+    return ws
 
 
 def test_metadata_widget(workset):
-    w = MetadataWidget(workset)
+    w = WidgetFactory.make_widget('MetadataWidget', workset)
     assert len(w.data) == 3

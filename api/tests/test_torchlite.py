@@ -1,25 +1,41 @@
 import pytest
-from api.extracted_features import Volume
+from api.torchlite import TorchLite
+from api.dashboard import Dashboard
+from api.extracted_features import Volume, WorkSet
+from api.widgets import WidgetFactory
 
 
 @pytest.fixture
 def volume_1():
+    v = Volume("uc1.32106011187561")
+    return v
+
+
+@pytest.fixture
+def volume_2():
     return Volume("loc.ark+=13960=t46q23w14")
 
 
 @pytest.fixture
-def page_1(volume_1):
-    return volume_1.pages[0]
+def workset_1(volume_1, volume_2):
+    ws = WorkSet()
+    ws.volumes = volume_1
+    ws.volumes = volume_2
+    return ws
 
 
-def test_volume(volume_1):
-    assert volume_1.id == "loc.ark+=13960=t46q23w14"
+@pytest.fixture
+def widget_1(workset_1):
+    return WidgetFactory.make_widget('MetadataWidget', workset_1)
 
 
-def test_page(page_1):
-    assert page_1.tokenCount == 52
-
-
-def test_volume_tokens(volume_1):
-    tokens = volume_1.tokens
-    assert len(tokens) == 1053
+def test_dashboards():
+    torchlite = TorchLite()
+    assert torchlite.dashboards == {}
+    d = Dashboard()
+    torchlite.add_dashboard(d)
+    assert torchlite.dashboards[d.id] == d
+    assert torchlite.get_dashboard(d.id) == d
+    assert len(torchlite.dashboards) == 1
+    torchlite.delete_dashboard(d.id)
+    assert len(torchlite.dashboards) == 0

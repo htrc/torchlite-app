@@ -12,6 +12,85 @@ class Volume:
         self._data = {}
         self._pages = []
         self._tokens = {}
+        self._title = None
+        self._type = None
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.id})"
+
+    @property
+    def data(self):
+        if not self._data:
+            url = "/".join((self.base_url, self.id))
+            r = requests.get(url)
+            json = r.json()
+            try:
+                self._data = json["data"]
+            except KeyError:
+                logging.warning(r.json()["message"])
+        return self._data
+
+    def fetch_metadata(self, field):
+        url = f"{self.base_url}/{self.id}/metadata?fields=metadata.{field}"
+        r = requests.get(url)
+        json = r.json()
+        return json['data']['metadata'][field]
+
+    @property
+    def title(self):
+        if not self._title:
+            url = f"{self.base_url}/{self.id}/metadata?fields=metadata.title"
+            r = requests.get(url)
+            json = r.json()
+            self._title = json['data']['metadata']['title']
+        return self._title
+
+    @property
+    def type(self):
+        if not self._type:
+            self._type = self.fetch_metadata('type')
+        return self._type
+
+    @property
+    def features(self):
+        return self.data["features"]
+
+    @property
+    def metadata(self):
+        return self.data["metadata"]
+
+    @property
+    def pageCount(self):
+        return self.features["pageCount"]
+
+    @property
+    def pages(self):
+        if not self._pages:
+            self._pages = [Page(page) for page in self.features["pages"]]
+        return self._pages
+
+    @property
+    def tokens(self):
+        if not self._tokens:
+            for page in self.pages:
+                for token in page.tokens.keys():
+                    try:
+                        tok = self._tokens[token]
+                    except KeyError:
+                        self._tokens[token] = {"pos": Counter()}
+                        tok = self._tokens[token]
+                    tok["pos"].update(page.tokens[token]["pos"])
+        return self._tokens
+
+
+class VolumeOld:
+    base_url = "https://tools.htrc.illinois.edu/ef-api/volumes"
+
+    def __init__(self, htid):
+        self.id = htid
+        self._data = {}
+        self._pages = []
+        self._tokens = {}
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.id})"
@@ -65,7 +144,7 @@ class WorkSet:
         self.workset_url = workset_id
         self._id = workset_id
         self._json = {}
-        self._volumes = []
+        self._volumes = {}
         self._tokens = {}
         self._description = None
 
@@ -95,24 +174,30 @@ class WorkSet:
     @property
     def volumes(self):
         if not self._volumes:
-            self._volumes = []
+            self._volumes = {}
             for gathered in self.json['gathers']:
                 v_id = urlparse(gathered['id']).path.split('/')[-1]
-                self._volumes.append(Volume(v_id))
+                self.add_volume(v_id)
         return self._volumes
 
-    @volumes.setter
-    def volumes(self, volume_id):
-        self._volumes.append(Volume(volume_id))
+    def add_volume(self, volume_id):
+        self._volumes[volume_id] = Volume(volume_id)
+
+    def get_volume(self, volume_id):
+        return self.volumes[volume_id]
+
+    def delete_volume(self, volume_id):
+        del self.volumes[volume_id]
+        return self.volumes
 
     @property
     def metadata(self):
-        return [v.metadata for v in self.volumes]
+        return [v.metadata for v in self.volumes.values()]
 
     @property
     def tokens(self):
         if not self._tokens:
-            for volume in self.volumes:
+            for volume in self.volumes.values():
                 for token in volume.tokens.keys():
                     try:
                         tok = self._tokens[token]

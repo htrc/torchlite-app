@@ -6,9 +6,9 @@ from api.extracted_features import WorkSet, Page
 def workset():
     mini_workset = WorkSet()
 
-    mini_workset.volumes = "uc1.32106011187561"
-    mini_workset.volumes = "mdp.35112103187797"
-    mini_workset.volumes = "uc1.$b684263"
+    mini_workset.add_volume("uc1.32106011187561")
+    mini_workset.add_volume("mdp.35112103187797")
+    mini_workset.add_volume("uc1.$b684263")
     mini_workset.description = "minimal workset"
     return mini_workset
 

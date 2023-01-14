@@ -17,12 +17,20 @@ class Widget:
     def data(self):
         return []
 
+    @property
+    def workset(self):
+        return self._workset
+
+    @workset.setter
+    def workset(self, ws):
+        self._workset = ws
+
 
 class MetadataWidget(Widget):
     @property
     def data(self):
         if self._data is None:
-            self._data = self._workset.metadata
+            self._data = self.workset.metadata
         return self._data
 
 
@@ -30,7 +38,7 @@ class WidgetFactory:
     def __init__(self):
         self._widget_classes = {}
 
-    def make_widget(widget_class, workset):
+    def make_widget(widget_class: str, workset):
         try:
             klass = globals()[widget_class]
             widget = klass(workset)
