@@ -149,6 +149,10 @@ class WorkSet:
         self._description = None
 
     @property
+    def id(self):
+        return self._id
+
+    @property
     def json(self):
         if not self._json:
             try:

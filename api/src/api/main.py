@@ -1,108 +1,53 @@
 import uuid
 import json
-import requests
+from api import torchlite
 import logging
 from fastapi import FastAPI, HTTPException
-from extracted_features import WorkSet
-from dashboard import Dashboard
+from api.extracted_features import WorkSet
+from api.dashboard import Dashboard
+from api.torchlite import TorchLite
 
 
-class TorchLite:
-    def __init__(self):
-        self._dashboards = {}
-        self._widgets = {}
-        self._worksets = {}
+torchlite = TorchLite()
 
-    @property
-    def dashboards(self):
-        return self._dashboards
+sample_ws_ids = []
 
-    def add_dashboard(self, dashboard):
-        self._dashboards[str(dashboard.id)] = dashboard
-        return self.dashboards
-
-    def get_dashboard(self, dashboard_id):
-        return self._dashboards[dashboard_id]
-
-    def delete_dashboard(self, dashboard_id):
-        del self._dashboards[dashboard_id]
-        return self.dashboards
-
-    @property
-    def widgets(self):
-        return self._widgets
-
-    def add_widget(self, widget):
-        self.widgets[str(widget.id)] = widget
-        return self.widgets
-
-    def get_widget(self, widget_id):
-        return self.widgets[widget_id]
-
-    def delete_widget(self, widget_id):
-        del self.widgets[widget_id]
-        return self.widgets
-
-    @property
-    def worksets(self):
-        return self._worksets
-
-    def add_workset(self, workset):
-        self.worksets[str(workset.id)] = workset
-        return self.worksets
-
-    def get_workset(self, workset_id):
-        return self.worksets[workset_id]
-
-    def delete_workset(self, workset_id):
-        del self.worksets[workset_id]
-        return self.worksets
-
-
-sample_ws_ids = [
-    'https://worksets.htrc.illinois.edu/wsid/771d1500-7ac6-11eb-8593-e5f5ab8b1c01'
-]
-
-sample_worksets = []
-for id in sample_ws_ids:
-    w = WorkSet(id)
-    sample_worksets.append(w)
+torchlite.add_workset(
+    WorkSet(
+        'https://worksets.htrc.illinois.edu/wsid/771d1500-7ac6-11eb-8593-e5f5ab8b1c01'
+    )
+)
 
 mini_workset = WorkSet()
+[
+    mini_workset.add_volume(v_id)
+    for v_id in ["uc1.32106011187561", "mdp.35112103187797", "uc1.$b684263"]
+]
 
-mini_workset.volumes = "uc1.32106011187561"
-mini_workset.volumes = "mdp.35112103187797"
-mini_workset.volumes = "uc1.$b684263"
 mini_workset.description = "minimal workset"
 
-sample_worksets.append(mini_workset)
+torchlite.add_widget(mini_workset)
+
+torchlite.add_dashboard(Dashboard())
 
 
 app = FastAPI()
 
 
-dashboards = {}
-
-d = Dashboard()
-dashboards[d.id] = d
-
-
 @app.get("/")
 def read_root():
-    return {
-        "sample_worksets": [w.description for w in sample_worksets],
-    }
+    return {"sample_worksets": [w.description for w in torchlite.worksets.values()]}
 
 
 @app.get("/dashboards")
 def get_root_dashboard():
-    return [{k: v} for k, v in dashboards.items()]
+    return [{k: v} for k, v in torchlite.dashboards.items()]
 
 
 @app.get("/dashboards/{id}")
 async def get_dashboard(id: str):
     try:
-        d = dashboards[id]
+        d = torchlite.dashboards[id]
         return d
     except KeyError:
         raise HTTPException(status_code=404, detail="dashboard not found")
@@ -111,7 +56,7 @@ async def get_dashboard(id: str):
 @app.post("/dashboard")
 def create_dashboard():
     d = Dashboard()
-    dashboards[d.id] = d
+    torchlite.add_dashboard(d)
     return d.id
 
 
