@@ -19,6 +19,7 @@ class Dashboard:
         return self._widgets
 
     def add_widget(self, widget):
+        widget.workset = self.workset
         self.widgets[str(widget.id)] = widget
         return self.widgets
 
@@ -36,4 +37,6 @@ class Dashboard:
     @workset.setter
     def workset(self, workset):
         self._workset = workset
+        for w in self.widgets:
+            w.workset = workset
         return self.workset

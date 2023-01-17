@@ -1,5 +1,6 @@
 from collections import Counter
 from urllib.parse import urlparse
+import uuid
 import requests
 import logging
 
@@ -140,40 +141,39 @@ class VolumeOld:
 
 
 class WorkSet:
-    def __init__(self, workset_id=''):
-        self.workset_url = workset_id
-        self._id = workset_id
-        self._json = {}
+    def __init__(self, **kwargs):
+        self.id = str(uuid.uuid1())
+        self.type = None
+        self.description = None
+        self.created = None
+        self.extent = None
+        self.title = None
+        self.visibility = None
+        self.intent = None
+        self.gathers = None
         self._volumes = {}
         self._tokens = {}
-        self._description = None
 
-    @property
-    def id(self):
-        return self._id
+        if 'url' in kwargs:
+            self.load_workset(kwargs['url'])
 
-    @property
-    def json(self):
-        if not self._json:
-            try:
-                r = requests.get(self.workset_url)
-                r.raise_for_status()
+    def load_workset(self, url):
+        try:
+            r = requests.get(url)
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            raise SystemExit(err)
 
-            except requests.exceptions.HTTPError as err:
-                raise SystemExit(err)
-
-            self._json = r.json()
-        return self._json
-
-    @property
-    def description(self):
-        if not self._description:
-            self._description = self.json['description']
-        return self._description
-
-    @description.setter
-    def description(self, v):
-        self._description = v
+        self._json = r.json()
+        self.id = self._json['id']
+        self.description = self._json['description']
+        self.type = self._json['type']
+        self.created = self._json['created']
+        self.extent = self._json['extent']
+        self.title = self._json['title']
+        self.visibility = self._json['visibility']
+        self.intent = self._json['intent']
+        self.gathers = self._json['gathers']
 
     @property
     def volumes(self):
