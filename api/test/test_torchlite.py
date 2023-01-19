@@ -1,4 +1,3 @@
-from api import torchlite
 import pytest
 from api.torchlite import TorchLite
 from api.dashboard import Dashboard
@@ -33,7 +32,6 @@ def widget_1():
 
 def test_worksets(workset_1):
     torchlite = TorchLite()
-
     assert torchlite.worksets == {}
     torchlite.add_workset(workset_1)
     key = workset_1.id

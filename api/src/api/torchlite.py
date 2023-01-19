@@ -1,5 +1,6 @@
 from api.extracted_features import WorkSet
 from api.dashboard import Dashboard
+from api.widgets import Widget
 
 
 class TorchLite:
@@ -7,6 +8,9 @@ class TorchLite:
         self._dashboards = {}
         self._widgets = {}
         self._worksets = {}
+
+        for cls in Widget.__subclasses__():
+            self._widgets[cls.__name__] = cls.__doc__
 
     @property
     def dashboards(self):
@@ -25,6 +29,7 @@ class TorchLite:
 
     @property
     def widgets(self):
+        '''The list of registered widgets'''
         return self._widgets
 
     def add_widget(self, widget):

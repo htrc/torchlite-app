@@ -6,7 +6,9 @@ def compose(f, g):
     return lambda x: f(g(x))
 
 
-class Widget:
+class Widget(object):
+    '''The base Widget class'''
+
     def __init__(self):
         self.id = uuid.uuid1()
         self.algorithm = lambda ws: ws
@@ -32,6 +34,8 @@ class Widget:
 
 
 class MetadataWidget(Widget):
+    '''Shows metadata for a workset'''
+
     def __init__(self):
         super().__init__()
 

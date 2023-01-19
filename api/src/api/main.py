@@ -79,8 +79,16 @@ def get_dashboard_widgets(dashboard_id: str):
 @app.post("/dashboards/{dashboard_id}/widgets/{widget_type}")
 def post_dashboard_widget(dashboard_id: str, widget_type: str):
     db = torchlite.get_dashboard(dashboard_id)
-    widget = WidgetFactory.make_widget('MetadataWidget', db.workset)
+    widget = WidgetFactory.make_widget(widget_type)
     db.add_widget(widget)
+
+
+##########
+# Widgets
+##########
+@app.get("/widgets")
+def get_widgets():
+    return torchlite.widgets
 
 
 ##########
