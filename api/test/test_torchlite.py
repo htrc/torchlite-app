@@ -1,3 +1,4 @@
+from api import torchlite
 import pytest
 from api.torchlite import TorchLite
 from api.dashboard import Dashboard
@@ -19,14 +20,25 @@ def volume_2():
 @pytest.fixture
 def workset_1(volume_1, volume_2):
     ws = WorkSet()
-    ws.volumes = volume_1
-    ws.volumes = volume_2
+    ws.add_volume(Volume("uc1.32106011187561"))
+    ws.add_volume(Volume("loc.ark+=13960=t46q23w14"))
+    ws.description = "two volumes"
     return ws
 
 
 @pytest.fixture
-def widget_1(workset_1):
-    return WidgetFactory.make_widget('MetadataWidget', workset_1)
+def widget_1():
+    return WidgetFactory.make_widget('MetadataWidget')
+
+
+def test_worksets(workset_1):
+    torchlite = TorchLite()
+
+    assert torchlite.worksets == {}
+    torchlite.add_workset(workset_1)
+    key = workset_1.id
+    assert torchlite.get_workset(key) == workset_1
+    assert len(torchlite.worksets) == 1
 
 
 def test_dashboards():
@@ -39,3 +51,15 @@ def test_dashboards():
     assert len(torchlite.dashboards) == 1
     torchlite.delete_dashboard(d.id)
     assert len(torchlite.dashboards) == 0
+
+
+def test_add_workset_to_dashboard(workset_1):
+    d = Dashboard()
+    d.workset = workset_1
+    assert d.workset == workset_1
+
+
+def test_add_widget_to_dashboard(widget_1):
+    d = Dashboard()
+    d.add_widget(widget_1)
+    assert len(d.widgets) == 1

@@ -88,4 +88,5 @@ def post_dashboard_widget(dashboard_id: str, widget_type: str):
 ##########
 @app.get("/worksets")
 def get_worksets():
-    return [{k: v} for k, v in torchlite._worksets.items()]
+    worksets = [{k: v.description} for k, v in torchlite.worksets.items()]
+    return worksets

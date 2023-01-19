@@ -12,9 +12,8 @@ def workset():
 
 
 @pytest.fixture
-def widget(workset):
-    w = WidgetFactory.make_widget('MetadataWidget', workset)
-    return w
+def widget():
+    return WidgetFactory.make_widget('MetadataWidget')
 
 
 def test_dashboard(workset, widget):

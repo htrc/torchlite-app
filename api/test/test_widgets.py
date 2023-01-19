@@ -16,5 +16,6 @@ def workset():
 
 
 def test_metadata_widget(workset):
-    w = WidgetFactory.make_widget('MetadataWidget', workset)
-    assert len(w.data) == 3
+    w = WidgetFactory.make_widget('MetadataWidget')
+    data = w.apply_to(workset)
+    assert len(data) == 3
