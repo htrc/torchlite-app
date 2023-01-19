@@ -53,7 +53,7 @@ async def get_dashboard(id: str):
 def create_dashboard():
     d = Dashboard()
     torchlite.add_dashboard(d)
-    return d.id
+    return {"dashboard": d.id}
 
 
 @app.get("/dashboards/{dashboard_id}/workset")
@@ -90,3 +90,9 @@ def post_dashboard_widget(dashboard_id: str, widget_type: str):
 def get_worksets():
     worksets = [{k: v.description} for k, v in torchlite.worksets.items()]
     return worksets
+
+
+@app.get("/worksets/{workset_id}")
+def get_workset_by_id(workset_id):
+    ws = torchlite.get_workset(workset_id)
+    return ws

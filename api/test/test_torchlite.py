@@ -53,6 +53,25 @@ def test_dashboards():
     assert len(torchlite.dashboards) == 0
 
 
+def test_add_workset_to_torchlite(workset_1):
+    torchlite = TorchLite()
+    torchlite.add_workset(workset_1)
+    assert len(torchlite.worksets) == 1
+
+
+def test_get_workset_to_torchlite(workset_1):
+    torchlite = TorchLite()
+    id = workset_1.id
+    torchlite.add_workset(workset_1)
+    assert torchlite.get_workset(id) == workset_1
+
+
+def test_add_workset_to_torchlite(workset_1):
+    torchlite = TorchLite()
+    torchlite.add_workset(workset_1)
+    assert len(torchlite.worksets) == 1
+
+
 def test_add_workset_to_dashboard(workset_1):
     d = Dashboard()
     d.workset = workset_1

@@ -109,7 +109,8 @@ class WorkSet:
             raise SystemExit(err)
 
         self._json = r.json()
-        self.id = self._json['id']
+        self.id = urlparse(url).path.split('/')[-1]
+        # self.id = self._json['id']
         self.description = self._json['description']
         self.type = self._json['type']
         self.created = self._json['created']
