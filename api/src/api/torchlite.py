@@ -14,7 +14,7 @@ class TorchLite:
 
     @property
     def dashboards(self):
-        return self._dashboards
+        return [k for k in self._dashboards.keys()]
 
     def add_dashboard(self, dashboard):
         self._dashboards[str(dashboard.id)] = dashboard

@@ -13,6 +13,16 @@ class Widget(object):
         self.id = uuid.uuid1()
         self.algorithm = lambda ws: ws
         self._cache = None
+        self._workset = None
+
+    @property
+    def workset(self):
+        return self._workset
+
+    @workset.setter
+    def workset(self, workset):
+        self.reset()
+        self._workset = workset
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.id})"
@@ -23,6 +33,10 @@ class Widget(object):
     def reset(self):
         self._cache = None
 
+    def refresh(self):
+        self.reset()
+        self.apply_to(self.workset)
+
     def apply_to(self, ws):
         if self._cache is None:
             self._cache = self.algorithm(ws)
@@ -30,6 +44,8 @@ class Widget(object):
 
     @property
     def data(self):
+        if self._cache is None:
+            self.refresh()
         return self._cache
 
 
@@ -40,6 +56,11 @@ class MetadataWidget(Widget):
         super().__init__()
 
         self.add_step(lambda ws: ws.metadata)
+
+        def return_values(metadata):
+            return [{"title": i['title']} for i in metadata]
+
+        self.add_step(lambda x: return_values(x))
 
 
 class WidgetFactory:

@@ -1,6 +1,5 @@
 import uuid
 import json
-from api import torchlite
 import logging
 from fastapi import FastAPI, HTTPException
 from api.extracted_features import WorkSet
@@ -8,8 +7,8 @@ from api.dashboard import Dashboard
 from api.torchlite import TorchLite
 from api.widgets import WidgetFactory
 
-torchlite = TorchLite()
-torchlite.add_workset(
+app = TorchLite()
+app.add_workset(
     WorkSet(
         url='https://worksets.htrc.illinois.edu/wsid/771d1500-7ac6-11eb-8593-e5f5ab8b1c01'
     )
@@ -21,86 +20,112 @@ mini_workset = WorkSet()
     for v_id in ["uc1.32106011187561", "mdp.35112103187797", "uc1.$b684263"]
 ]
 mini_workset.description = "minimal workset"
-torchlite.add_workset(mini_workset)
+app.add_workset(mini_workset)
 
 
-torchlite.add_dashboard(Dashboard())
+app.add_dashboard(Dashboard())
 
 
-app = FastAPI()
+tlapi = FastAPI()
 
 
-@app.get("/")
+@tlapi.get("/")
 def read_root():
-    return {"sample_worksets": [w.description for w in torchlite.worksets.values()]}
+    return {"sample_worksets": [w.description for w in app.worksets.values()]}
 
 
-@app.get("/dashboards")
+@tlapi.get("/dashboards")
 def get_root_dashboard():
-    return [{k: v} for k, v in torchlite.dashboards.items()]
+    return app.dashboards
 
 
-@app.get("/dashboards/{id}")
+@tlapi.get("/dashboards/{id}")
 async def get_dashboard(id: str):
     try:
-        d = torchlite.get_dashboard(id)
-        return d
+        d = app.get_dashboard(id)
+        return {"dashboard": d.id, "widgets": [k for k in d.widgets.keys()]}
+
     except KeyError:
         raise HTTPException(status_code=404, detail="dashboard not found")
 
 
-@app.post("/dashboards")
+@tlapi.post("/dashboards")
 def create_dashboard():
     d = Dashboard()
-    torchlite.add_dashboard(d)
+    app.add_dashboard(d)
     return {"dashboard": d.id}
 
+def workset_metadata(workset):
+    metadata = {}
+    metadata['id'] = workset['id']
 
-@app.get("/dashboards/{dashboard_id}/workset")
+@tlapi.get("/dashboards/{dashboard_id}/workset")
 def get_dashboard_workset(dashboard_id: str):
-    dashboard = torchlite.get_dashboard(dashboard_id)
-    return dashboard.workset
+    result = {}
+    dashboard = app.get_dashboard(dashboard_id)
+    workset = dashboard.workset
+    if workset:
+        result = workset.metadata
+    return result
 
 
-@app.put("/dashboards/{dashboard_id}/workset/{workset_id}")
+@tlapi.put("/dashboards/{dashboard_id}/workset/{workset_id}")
 def put_dashboard_workset(dashboard_id: str, workset_id: str):
-    dashboard = torchlite.get_dashboard(dashboard_id)
-    workset = torchlite.get_workset(workset_id)
+    dashboard = app.get_dashboard(dashboard_id)
+    workset = app.get_workset(workset_id)
     dashboard.workset = workset
-    return dashboard.workset
+    return {"dashboard": dashboard.id, "workset": workset.id}
 
 
-@app.get("/dashboards/{dashboard_id}/widgets")
+@tlapi.get("/dashboards/{dashboard_id}/widgets")
 def get_dashboard_widgets(dashboard_id: str):
-    dashboard = torchlite.get_dashboard(dashboard_id)
-    return dashboard.widgets
+    dashboard = app.get_dashboard(dashboard_id)
+    return [k for k in dashboard.widgets.keys()]
 
 
-@app.post("/dashboards/{dashboard_id}/widgets/{widget_type}")
+@tlapi.post("/dashboards/{dashboard_id}/widgets/{widget_type}")
 def post_dashboard_widget(dashboard_id: str, widget_type: str):
-    db = torchlite.get_dashboard(dashboard_id)
+    dashboard = app.get_dashboard(dashboard_id)
     widget = WidgetFactory.make_widget(widget_type)
-    db.add_widget(widget)
+    dashboard.add_widget(widget)
+    return {"widget": widget.id}
+
+
+@tlapi.get("/dashboards/{dashboard_id}/widgets/{widget_id}")
+def get_dashboard_widget(dashboard_id: str, widget_id: str):
+    dashboard = app.get_dashboard(dashboard_id)
+    widget = dashboard.get_widget(widget_id)
+    result = {"id": widget.id}
+    ws = widget.workset
+    if widget.workset:
+        result["workset"] = ws.id
+    return result
+
+
+@tlapi.get("/dashboards/{dashboard_id}/widgets/{widget_id}/data")
+def get_widget_data(dashboard_id: str, widget_id: str):
+    dashboard = app.get_dashboard(dashboard_id)
+    widget = dashboard.get_widget(widget_id)
+    return widget.data
 
 
 ##########
 # Widgets
 ##########
-@app.get("/widgets")
+@tlapi.get("/widgets")
 def get_widgets():
-    return torchlite.widgets
+    return app.widgets
 
 
 ##########
 # WorkSets
 ##########
-@app.get("/worksets")
+@tlapi.get("/worksets")
 def get_worksets():
-    worksets = [{k: v.description} for k, v in torchlite.worksets.items()]
-    return worksets
+    return [ws.metadata for ws in app.worksets.values()]
 
 
-@app.get("/worksets/{workset_id}")
+@tlapi.get("/worksets/{workset_id}")
 def get_workset_by_id(workset_id):
-    ws = torchlite.get_workset(workset_id)
-    return ws
+    ws = app.get_workset(workset_id)
+    return ws.metadata

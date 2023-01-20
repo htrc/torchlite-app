@@ -37,3 +37,6 @@ class Dashboard:
     @workset.setter
     def workset(self, workset):
         self._workset = workset
+        for key in self.widgets:
+            widget = self.get_widget(key)
+            widget.workset = workset

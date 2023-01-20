@@ -17,11 +17,15 @@ POST http://localhost:8000/dashboards
 #
 GET http://localhost:8000/dashboards/:my-db
 #
-GET http://localhost:8000/dashboards/:my-db/widgets
+GET http://localhost:8000/dashboards/:my-db/widgets/
 #
 POST http://localhost:8000/dashboards/:my-db/widgets/MetadataWidget
+-> run-hook (restclient-set-var ":widget" (cdr (assq 'widget (json-read))))
+#
+GET http://localhost:8000/dashboards/:my-db/widgets/:widget
 #
 GET http://localhost:8000/dashboards/:my-db/workset
 #
 PUT http://localhost:8000/dashboards/:my-db/workset/771d1500-7ac6-11eb-8593-e5f5ab8b1c01
 #
+GET http://localhost:8000/dashboards/:my-db/widgets/:widget/data

@@ -120,6 +120,19 @@ class WorkSet:
         self.intent = self._json['intent']
         self.gathers = self._json['gathers']
 
+
+    @property
+    def metadata(self):
+        return {
+            "id": self.id,
+            "description": self.description,
+            "created": self.created,
+            "extent": self.extent,
+            "title": self.title,
+            "visibility": self.visibility,
+            "intent": self.intent
+        }
+
     @property
     def volumes(self):
         if not self._volumes:
@@ -139,9 +152,9 @@ class WorkSet:
         del self.volumes[volume_id]
         return self.volumes
 
-    @property
-    def metadata(self):
-        return [v.metadata for v in self.volumes.values()]
+    # @property
+    # def metadata(self):
+    #     return [v.metadata for v in self.volumes.values()]
 
     @property
     def tokens(self):
