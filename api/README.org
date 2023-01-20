@@ -1,0 +1,27 @@
+* Installation
+#+begin_src shell
+  gh repo clone htrc/torchlite-app
+  cd torchlite-app/api
+  poetry install
+  cd src/api/
+  poetry run uvicorn main:tlapi
+#+end_src
+* Documentation:
+http://localhost:8000/docs
+
+* Example
+#+begin_src shell
+  curl -X GET http://localhost:8000/worksets
+
+
+
+  curl -s http://localhost:8000/dashboards | jq -r '.[] | keys[]'
+  DASHBOARD=`curl -X POST http://localhost:8000/dashboards | jq -r .dashboard`
+
+  DB=`curl -s http://localhost:8000/dashboards | jq -r '.[] | keys[]'`
+
+  curl -X PUT http://localhost:8000/dashboards/$DASHBOARD/workset/771d1500-7ac6-11eb-8593-e5f5ab8b1c01
+
+
+  curl -X POST http://localhost:8000/dashboards/$DASHBOARD/widgets/MetadataWidget
+#+end_src
