@@ -13,14 +13,27 @@ class Volume:
         self._data = {}
         self._pages = []
         self._tokens = {}
-        self._title = None
         self._type = None
+        self._dateCreated = None
+        self._title = None
+        self._contributor = None
+        self._pubDate = None
+        self._publisher = None
+        self._pubPlace = None
+        self._language = None
+        self._category = None
+        self._genre = None
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.id})"
 
     @property
+    def url(self):
+        return "/".join((self.base_url, self.id))
+
+    @property
     def data(self):
+        '''Fetches all data'''
         if not self._data:
             url = "/".join((self.base_url, self.id))
             r = requests.get(url)
@@ -32,7 +45,8 @@ class Volume:
         return self._data
 
     def fetch_metadata(self, field):
-        url = f"{self.base_url}/{self.id}/metadata?fields=metadata.{field}"
+        # url = f"{self.base_url}/{self.id}/metadata?fields=metadata.{field}"
+        url = f"{self.url}/metadata?fields=metadata.{field}"
         r = requests.get(url)
         json = r.json()
         return json['data']['metadata'][field]
@@ -40,10 +54,7 @@ class Volume:
     @property
     def title(self):
         if not self._title:
-            url = f"{self.base_url}/{self.id}/metadata?fields=metadata.title"
-            r = requests.get(url)
-            json = r.json()
-            self._title = json['data']['metadata']['title']
+            self._title = self.fetch_metadata('title')
         return self._title
 
     @property
@@ -51,6 +62,70 @@ class Volume:
         if not self._type:
             self._type = self.fetch_metadata('type')
         return self._type
+
+    @property
+    def pub_date(self):
+        if not self._pub_date:
+            self._pub_date = self.fetch_metadata('pub_date')
+        return self._pub_date
+
+    @property
+    def publisher(self):
+        if not self._publisher:
+            self._publisher = self.fetch_metadata('publisher')
+        return self._publisher
+
+    @property
+    def pub_place(self):
+        if not self._pub_place:
+            self._pub_place = self.fetch_metadata('pub_place')
+        return self._pub_place
+
+    @property
+    def language(self):
+        if not self._language:
+            self._language = self.fetch_metadata('language')
+        return self._language
+
+    @property
+    def category(self):
+        if not self._category:
+            self._category = self.fetch_metadata('category')
+        return self._category
+
+    @property
+    def genre(self):
+        if not self._genre:
+            self._genre = self.fetch_metadata('genre')
+        return self._genre
+
+    @property
+    def contributor(self):
+        if not self._contributor:
+            self._contributor = self.fetch_metadata('contributor')
+        return self._contributor
+
+    @property
+    def date_created(self):
+        if not self._date_created:
+            self._date_created = self.fetch_metadata('date_created')
+        return self._date_created
+
+    @property
+    def page_count(self):
+        if not self._date_created:
+            self._date_created = self.fetch_metadata('date_created')
+        return self._date_created
+
+    @property
+    def pages(self):
+        if not self._pages:
+            pages_url = f"{self.url}/pages?fields=pages.seq"
+            r = requests.get(pages_url)
+            json = r.json()
+            seq_nums = [page['seq'] for page in json['data']['pages']]
+            self._pages = [Page(self, seq_num) for seq_num in seq_nums]
+        return self._pages
 
     @property
     def features(self):
@@ -63,12 +138,6 @@ class Volume:
     @property
     def pageCount(self):
         return self.features["pageCount"]
-
-    @property
-    def pages(self):
-        if not self._pages:
-            self._pages = [Page(page) for page in self.features["pages"]]
-        return self._pages
 
     @property
     def tokens(self):
@@ -120,7 +189,6 @@ class WorkSet:
         self.intent = self._json['intent']
         self.gathers = self._json['gathers']
 
-
     @property
     def metadata(self):
         return {
@@ -130,7 +198,7 @@ class WorkSet:
             "extent": self.extent,
             "title": self.title,
             "visibility": self.visibility,
-            "intent": self.intent
+            "intent": self.intent,
         }
 
     @property
@@ -171,83 +239,49 @@ class WorkSet:
 
 
 class Page:
-    def __init__(self, kwargs):
-        self._kwargs = kwargs
+    def __init__(self, volume, seq):
+        self._volume = volume
+        self.seq = seq
+        self._properties = {}
         self._tokens = {}
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.seq})"
+    def get_property(self, property):
+        if property not in self._properties:
+            url = f"{self._volume.url}/pages?seq={self.seq}&fields=pages.{property}"
+            r = requests.get(url)
+            json = r.json()
+            try:
+                page_data = json["data"]["pages"]
+                duff = [p[property] for p in page_data][0]
+                self._properties[property] = duff
 
-    @property
-    def seq(self):
-        return self._kwargs["seq"]
+            except KeyError:
+                logging.warning(r.json()["message"])
+        return self._properties[property]
 
     @property
     def tokenCount(self):
-        return self._kwargs["tokenCount"]
-
-    @property
-    def lineCount(self):
-        return self._kwargs["lineCount"]
+        return self.get_property('tokenCount')
 
     @property
     def emptyLineCount(self):
-        return self._kwargs["emptyLineCount"]
+        return self.get_property('emptyLineCount')
+
+    @property
+    def lineCount(self):
+        return self.get_property('lineCount')
 
     @property
     def sentenceCount(self):
-        return self._kwargs["sentenceCount"]
-
-    @property
-    def header(self):
-        return self._kwargs["header"]
-
-    @property
-    def body(self):
-        return self._kwargs["body"]
-
-    @property
-    def footer(self):
-        return self._kwargs["footer"]
-
-    @property
-    def calculatedLanguage(self):
-        return self._kwargs["calculatedLanguage"]
-
-    # The following values are hoisted from the body section;
-    # TODO make them the sum of values from header, body, and footer
-
-    @property
-    def capAlphaSeq(self):
-        try:
-            return self.body["capAlphaSeq"]
-        except TypeError:
-            return 0
-
-    @property
-    def beginCharCount(self):
-        try:
-            return self.body["beginCharCount"]
-        except TypeError:
-            return {}
-
-    @property
-    def endCharCount(self):
-        try:
-            return self.body["endCharCount"]
-        except TypeError:
-            return {}
+        return self.get_property('sentenceCount')
 
     @property
     def tokenPosCount(self):
-        try:
-            return self.body["tokenPosCount"]
-        except TypeError:
-            return {}
+        return self.get_property('body')['tokenPosCount']
 
     @property
     def tokens(self):
-        if not self._tokens:
+        if not self._tokens and self.tokenCount > 0:
             for k in self.tokenPosCount.keys():
                 token = k.lower()
                 pos = list(self.tokenPosCount[k])[0]
