@@ -14,12 +14,12 @@ class Volume:
         self._pages = []
         self._tokens = {}
         self._type = None
-        self._dateCreated = None
+        self._date_created = None
         self._title = None
         self._contributor = None
-        self._pubDate = None
+        self._pub_date = None
         self._publisher = None
-        self._pubPlace = None
+        self._pub_place = None
         self._language = None
         self._category = None
         self._genre = None
@@ -66,7 +66,7 @@ class Volume:
     @property
     def pub_date(self):
         if not self._pub_date:
-            self._pub_date = self.fetch_metadata('pub_date')
+            self._pub_date = self.fetch_metadata('pubDate')
         return self._pub_date
 
     @property
@@ -78,7 +78,7 @@ class Volume:
     @property
     def pub_place(self):
         if not self._pub_place:
-            self._pub_place = self.fetch_metadata('pub_place')
+            self._pub_place = self.fetch_metadata('pubPlace')
         return self._pub_place
 
     @property
@@ -108,7 +108,7 @@ class Volume:
     @property
     def date_created(self):
         if not self._date_created:
-            self._date_created = self.fetch_metadata('date_created')
+            self._date_created = self.fetch_metadata('dateCreated')
         return self._date_created
 
     @property

@@ -41,10 +41,9 @@ def test_worksets(workset_1):
 
 def test_dashboards():
     torchlite = TorchLite()
-    assert torchlite.dashboards == {}
+    assert len(torchlite.dashboards) == 0
     d = Dashboard()
     torchlite.add_dashboard(d)
-    assert torchlite.dashboards[d.id] == d
     assert torchlite.get_dashboard(d.id) == d
     assert len(torchlite.dashboards) == 1
     torchlite.delete_dashboard(d.id)

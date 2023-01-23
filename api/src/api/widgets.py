@@ -55,12 +55,19 @@ class MetadataWidget(Widget):
     def __init__(self):
         super().__init__()
 
-        self.add_step(lambda ws: ws.metadata)
+        def return_values(ws):
+            result = {}
+            for k, v in ws.volumes.items():
+                md = {}
+                md['title'] = v.title
+                md['pub_date'] = v.pub_date
+                md['publisher'] = v.publisher
+                md['pub_place'] = v.pub_place
+                result[k] = md
 
-        def return_values(metadata):
-            return [{"title": i['title']} for i in metadata]
+            return result
 
-        self.add_step(lambda x: return_values(x))
+        self.add_step(lambda ws: return_values(ws))
 
 
 class WidgetFactory:
