@@ -55,9 +55,11 @@ def create_dashboard():
     app.add_dashboard(d)
     return {"dashboard": d.id}
 
+
 def workset_metadata(workset):
     metadata = {}
     metadata['id'] = workset['id']
+
 
 @tlapi.get("/dashboards/{dashboard_id}/workset")
 def get_dashboard_workset(dashboard_id: str):
