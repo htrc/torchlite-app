@@ -1,3 +1,5 @@
+"""Object API to the Extracted Features API."""
+
 from collections import Counter
 from urllib.parse import urlparse
 import uuid
@@ -33,7 +35,13 @@ class Volume:
 
     @property
     def data(self):
-        '''Fetches all data'''
+        """
+        Fetches all data for the Volume.
+
+        This can be expensive if the Volume is large,
+        so most of the time one should use the individual
+        field properties.
+        """
         if not self._data:
             url = "/".join((self.base_url, self.id))
             r = requests.get(url)
@@ -45,11 +53,18 @@ class Volume:
         return self._data
 
     def fetch_metadata(self, field):
-        # url = f"{self.base_url}/{self.id}/metadata?fields=metadata.{field}"
+        """Fetches metadata field via the EF API."""
         url = f"{self.url}/metadata?fields=metadata.{field}"
         r = requests.get(url)
         json = r.json()
         return json['data']['metadata'][field]
+
+    def fetch_feature(self, field):
+        """Fetches metadata field via the EF API."""
+        url = f"{self.url}?fields=features.{field}"
+        r = requests.get(url)
+        json = r.json()
+        return json['data']['features'][field]
 
     @property
     def title(self):
@@ -114,7 +129,7 @@ class Volume:
     @property
     def page_count(self):
         if not self._date_created:
-            self._date_created = self.fetch_metadata('date_created')
+            self._date_created = self.fetch_feature('pageCount')
         return self._date_created
 
     @property
@@ -126,18 +141,6 @@ class Volume:
             seq_nums = [page['seq'] for page in json['data']['pages']]
             self._pages = [Page(self, seq_num) for seq_num in seq_nums]
         return self._pages
-
-    @property
-    def features(self):
-        return self.data["features"]
-
-    @property
-    def metadata(self):
-        return self.data["metadata"]
-
-    @property
-    def pageCount(self):
-        return self.features["pageCount"]
 
     @property
     def tokens(self):
@@ -219,10 +222,6 @@ class WorkSet:
     def delete_volume(self, volume_id):
         del self.volumes[volume_id]
         return self.volumes
-
-    # @property
-    # def metadata(self):
-    #     return [v.metadata for v in self.volumes.values()]
 
     @property
     def tokens(self):

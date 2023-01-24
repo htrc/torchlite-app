@@ -28,3 +28,8 @@ def test_type(volume1):
 
 def test_contributor(volume2):
     assert volume2.contributor['name'] == "Groton Historical Society (Groton, Mass.)"
+
+
+def test_fetch_feature(volume1):
+    result = volume1.fetch_feature('pageCount')
+    assert result == 70

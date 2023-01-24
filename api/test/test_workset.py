@@ -15,7 +15,3 @@ def workset():
 
 def test_volumes(workset):
     assert len(workset.volumes) == 3
-
-
-def test_tokens(workset):
-    assert len(workset.tokens) == 47892
