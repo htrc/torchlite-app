@@ -2,12 +2,17 @@ import uuid
 import json
 import logging
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from api.extracted_features import WorkSet
 from api.dashboard import Dashboard
 from api.torchlite import TorchLite
 from api.widgets import WidgetFactory
 
 app = TorchLite()
+
+origins = ["http://localhost", "http://localhost:8080", "http://localhost:3000"]
+
+
 app.add_workset(
     WorkSet(
         url='https://worksets.htrc.illinois.edu/wsid/771d1500-7ac6-11eb-8593-e5f5ab8b1c01'
@@ -19,14 +24,23 @@ mini_workset = WorkSet()
     mini_workset.add_volume(v_id)
     for v_id in ["uc1.32106011187561", "mdp.35112103187797", "uc1.$b684263"]
 ]
-mini_workset.description = "minimal workset"
+mini_workset.title = "minimal workset"
+mini_workset.description = "minimal workset for testing"
 app.add_workset(mini_workset)
 
 
-app.add_dashboard(Dashboard())
+app.add_dashboard(Dashboard("default"))
 
 
 tlapi = FastAPI()
+
+tlapi.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @tlapi.get("/")
@@ -130,4 +144,4 @@ def get_worksets():
 @tlapi.get("/worksets/{workset_id}")
 def get_workset_by_id(workset_id):
     ws = app.get_workset(workset_id)
-    return ws.metadata
+    return ws

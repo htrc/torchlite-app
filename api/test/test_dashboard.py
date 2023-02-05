@@ -2,6 +2,7 @@ import pytest
 from api.dashboard import Dashboard
 from api.extracted_features import WorkSet, Volume
 from api.widgets import WidgetFactory
+import uuid
 
 
 @pytest.fixture
@@ -14,6 +15,15 @@ def workset():
 @pytest.fixture
 def widget():
     return WidgetFactory.make_widget('MetadataWidget')
+
+
+def test_dashboard_id():
+    my_id = "foo"
+    dashboard = Dashboard(my_id)
+    assert dashboard.id == my_id
+
+    dashboard2 = Dashboard()
+    assert isinstance(dashboard2.id, str)
 
 
 def test_dashboard(workset, widget):

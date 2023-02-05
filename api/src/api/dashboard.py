@@ -11,8 +11,11 @@ import uuid
 
 
 class Dashboard:
-    def __init__(self):
-        self._id = uuid.uuid1()
+    def __init__(self, id=None):
+        if id == None:
+            self._id = uuid.uuid1()
+        else:
+            self._id = id
         self._widgets = {}
         self._workset = None
 
