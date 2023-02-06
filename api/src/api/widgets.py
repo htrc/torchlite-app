@@ -58,7 +58,10 @@ class MetadataWidget(Widget):
         def return_values(ws):
             result = []
             for k, v in ws.volumes.items():
-                publishers = [i['name'] for i in v.publisher]
+                if isinstance(v.publisher, list):
+                    publishers = [i['name'] for i in v.publisher]
+                else:
+                    publishers = [v.publisher['name']]
 
                 md = {}
                 md['id'] = k
