@@ -1,0 +1,19 @@
+* How to run the Torchlite demo
+
+** Start the backend
+#+begin_src shell
+  cd backend/
+  poetry shell
+  cd src/api
+  uvicorn main:tlapi --reload
+#+end_src
+
+Point your browser at http://localhost:8000/docs, and use the UI to select a workset and add MetadataWidget to the default dashboard
+
+** Start the frontend
+#+begin_src shell
+  cd frontend/
+  npm run dev
+#+end_src
+
+Point your browser at http://localhost:3000
