@@ -56,14 +56,17 @@ class MetadataWidget(Widget):
         super().__init__()
 
         def return_values(ws):
-            result = {}
+            result = []
             for k, v in ws.volumes.items():
+                publishers = [i['name'] for i in v.publisher]
+
                 md = {}
+                md['id'] = k
                 md['title'] = v.title
                 md['pub_date'] = v.pub_date
-                md['publisher'] = v.publisher
-                md['pub_place'] = v.pub_place
-                result[k] = md
+                md['publisher'] = publishers
+                md['pub_place'] = v.pub_place['name']
+                result.append(md)
 
             return result
 
