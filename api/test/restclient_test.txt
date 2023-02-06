@@ -33,3 +33,5 @@ GET http://localhost:8000/dashboards/:my-db/widgets/:widget/data
 GET http://localhost:8000/dashboards/default
 #
 PUT http://localhost:8000/dashboards/default/workset/771d1500-7ac6-11eb-8593-e5f5ab8b1c01
+#
+POST http://localhost:8000/dashboards/default/widgets/MetadataWidget
